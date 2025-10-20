@@ -7,16 +7,25 @@ from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.firefox.options import Options
 
 def setup(x, element):
-    service = Service(executable_path=constants.EXECUTABLE_PATH)
-    
+    service = Service(executable_path=constants.EXECUTABLE_PATH)    # gets the driver
     options = Options()
-    options.binary_location = constants.BINARY_PATH
-    
-    driver = webdriver.Firefox(service=service, options=options)
+    options.binary_location = constants.BINARY_PATH # reaches firefox
+    driver = webdriver.Firefox(service=service, options=options)    # initiates the driver
     
     try:
-        driver.get(constants.URL)
+        driver.get(constants.URL)   # reaches the website
         time.sleep(3)
+        # scrolls to the bottom of the page
+        lenOfPage = driver.execute_script("window.scrollTo(0, document.body.scrollHeight);var lenOfPage=document.body.scrollHeight;return lenOfPage;")
+        match=False
+        while(match==False):
+                lastCount = lenOfPage
+                time.sleep(3)
+                lenOfPage = driver.execute_script("window.scrollTo(0, document.body.scrollHeight);var lenOfPage=document.body.scrollHeight;return lenOfPage;")
+                if lastCount==lenOfPage:
+                    match=True
+                    
+        # searches for the classes in setup
         xpath = x
         found = driver.find_elements(By.XPATH, xpath)
         
@@ -34,7 +43,7 @@ def setup(x, element):
 def crawler(url):
     try:
         response = requests.get(url)
-        response.raise_for_status # Throws an error if status is different than 200
+        response.raise_for_status   # Throws an error if status is different than 200
         
         setup("//div[contains(@class, 'política de privacidade') or contains(@class, 'politica de privacidade') or contains(@class, 'privacy policy') or contains(text(), 'política de privacidade')]", "privacy policy")
         
@@ -42,5 +51,7 @@ def crawler(url):
     
     except Exception as err:
         print(f"Error trying to reach {url}: {err}")
-        
-crawler(constants.URL)
+
+# kickstarts the program
+if __name__ == "__main__":   
+    crawler(constants.URL)
