@@ -1,8 +1,6 @@
 import requests
 import time
 import constants
-import privacy_policy
-import cookies
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.service import Service
@@ -22,12 +20,10 @@ def setup(x, element):
         xpath = x
         found = driver.find_elements(By.XPATH, xpath)
         
-        print("FOUND: " + found)
-        
         if found:
-            print("Site presents " + element)
+            print("Site presents", element)
         else:
-            print("Site does not present " + element)
+            print("Site does not present", element)
             
     except Exception as err:
         print((f"Error {constants.URL}: {err}"))
@@ -40,8 +36,9 @@ def crawler(url):
         response = requests.get(url)
         response.raise_for_status # Throws an error if status is different than 200
         
-        privacy_policy.check_privacy_policy()
-        cookies.check_cookies()
+        setup("//div[contains(@class, 'política de privacidade') or contains(@class, 'politica de privacidade') or contains(@class, 'privacy policy') or contains(text(), 'política de privacidade')]", "privacy policy")
+        
+        setup("//div[contains(@class, 'cookie')]//button[contains(text(), 'recusar') or contains(text(), 'refuse') or contains(text(), 'non-essential') or contains(text(), 'non-essentials')]", "banner for cookies")
     
     except Exception as err:
         print(f"Error trying to reach {url}: {err}")
