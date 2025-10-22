@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Data-sniffer</title>
+  </head>
+  <body>
+    <section class="input_section">
+      <label for="url">Insira a URL do site:</label>
+      <input type="text" id="url" value="" />
+
+      <button id="check_button">GO</button>
+    </section>
+    <div class="results" id="results"></div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        document
+          .getElementById("check_button")
+          .addEventListener("click", run_crawler);
+      });
+
+      async function run_crawler() {
+        const button = document.getElementById("check_button");
+        const resultsDiv = document.getElementById("results");
+        const url_input = document.getElementById("url");
+
+        try {
+          const response = await fetch("/run-crawler", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              url: url_input.value || null,
+            }),
+          });
+
+          const data = await response.json();
+
+          if (data.success) {
+            resultsDiv.innerHTML =
+              '<h2 style="margin-bottom: 20px; color: #333;">Resultados:</h2>';
+
+            data.results.forEach((result) => {
+              const icon = result.passed ? "✔️" : "❌";
+              const div = document.createElement("div");
+              div.className = "result_item";
+              div.innerHTML = `
+                    <span class="result_icon">${icon}</span>
+                    <span class="result_text">${result.check}</span>
+                `;
+              resultsDiv.appendChild(div);
+            });
+
+            resultsDiv.style.display = "block";
+            input_section.style.display = "none";
+          } else {
+          }
+        } catch (err) {
+        } finally {
+        }
+      }
+    </script>
+  </body>
+</html>

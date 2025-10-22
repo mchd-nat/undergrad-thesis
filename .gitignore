@@ -1,3 +1,4 @@
 settings.json
 constants.py
-*.pyc
+__pycache__/
+venv/
