@@ -27,7 +27,7 @@ def check_permission(url: str, user_agent: str = "*") -> bool:
 
 # starts the driver
 def setup_driver() -> webdriver.Firefox:
-    if not check_permission(constants.URL, constants.USER_AGENT): 
+    if not check_permission(constants.url, constants.USER_AGENT): 
         sys.exit("Robots.txt disallows crawling this URL.")
         
     service = Service(executable_path=constants.EXECUTABLE_PATH) 
@@ -40,7 +40,7 @@ def setup_driver() -> webdriver.Firefox:
 
 # reaches out to the website and gets its body tag
 def reach_website(driver: webdriver.Firefox) -> None:
-    driver.get(constants.URL)   # reaches the website
+    driver.get(constants.url)   # reaches the website
     WebDriverWait(driver, 15).until(
         EC.presence_of_element_located((By.TAG_NAME, "body"))
     )
@@ -118,7 +118,7 @@ def check_password_strength(driver) -> None:
 
 # check if cookies are collected before consent
 def check_consent_before_cookies(consent_locator, driver):
-    driver.get(constants.URL)
+    driver.get(constants.url)
     WebDriverWait(driver, 15).until(
         EC.presence_of_element_located((By.TAG_NAME, "body"))
     )
